@@ -1,35 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.tsx
+import React from "react";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+// Универсальный компонент страницы
+interface PageProps {
+  title: string;
 }
 
-export default App
+const Page: React.FC<PageProps> = ({ title }) => {
+  return (
+    <div className="page-content">
+      <h1>{title}</h1>
+      <p>Вы находитесь на странице «{title}».</p>
+    </div>
+  );
+};
+
+// Компонент навбара
+const Navbar: React.FC = () => {
+  return (
+    <nav className="navbar">
+      <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
+        Главная
+      </NavLink>
+      <NavLink
+        to="/about"
+        className={({ isActive }) => (isActive ? "active" : "")}
+      >
+        О компании
+      </NavLink>
+      <NavLink
+        to="/services"
+        className={({ isActive }) => (isActive ? "active" : "")}
+      >
+        Услуги
+      </NavLink>
+      <NavLink
+        to="/contacts"
+        className={({ isActive }) => (isActive ? "active" : "")}
+      >
+        Контакты
+      </NavLink>
+    </nav>
+  );
+};
+
+// Главный компонент App
+const App: React.FC = () => {
+  return (
+    <BrowserRouter>
+      <div className="app-container">
+        <Navbar />
+
+        {/* main-content теперь flex-grow: 1 и центрирует контент */}
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Page title="Главная" />} />
+            <Route path="/about" element={<Page title="О компании" />} />
+            <Route path="/services" element={<Page title="Услуги" />} />
+            <Route path="/contacts" element={<Page title="Контакты" />} />
+            <Route path="*" element={<Page title="Ошибка 404" />} />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
+  );
+};
+
+export default App;
