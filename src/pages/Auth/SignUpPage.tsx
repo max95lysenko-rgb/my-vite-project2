@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
-// Схема регистрации
 const signUpSchema = z
   .object({
     email: z.string().min(1, "Почта обязательна").email("Неверный формат"),
