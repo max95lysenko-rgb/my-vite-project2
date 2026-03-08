@@ -1,39 +1,91 @@
 import React from "react";
-import { Typography, Button, Divider } from "antd";
+import { Form, Input, Button, Checkbox, Typography, message } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 const SignInPage: React.FC = () => {
+  const [form] = Form.useForm();
+
+  const onFinish = (values: any) => {
+    console.log("Данные входа:", values);
+    message.success("Успешный вход!");
+  };
+
   return (
     <>
-      <Title level={3} style={{ marginTop: 0 }}>
-        Вход
-      </Title>
-      <Text type="secondary">Введите учетные данные для доступа</Text>
-
-      <div
-        style={{
-          height: 200,
-          background: "#fafafa",
-          border: "1px dashed #d9d9d9",
-          borderRadius: 8,
-          margin: "24px 0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Text type="secondary">Форма входа появится здесь</Text>
+      <div style={{ textAlign: "center", marginBottom: 24 }}>
+        <Title level={3} style={{ margin: 0 }}>
+          Вход
+        </Title>
+        <Text type="secondary">Добро пожаловать в проект!</Text>
       </div>
 
-      <Button type="primary" block size="large">
-        Войти
-      </Button>
-      <Divider />
+      <Form
+        form={form}
+        name="login_form"
+        layout="vertical"
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        size="large"
+      >
+        <Form.Item
+          name="email"
+          rules={[
+            { required: true, message: "Введите ваш Email!" },
+            { type: "email", message: "Некорректный формат Email!" },
+          ]}
+        >
+          <Input
+            prefix={<UserOutlined style={{ color: "#bfbfbf" }} />}
+            placeholder="Email"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: "Введите пароль!" }]}
+        >
+          <Input.Password
+            prefix={<LockOutlined style={{ color: "#bfbfbf" }} />}
+            placeholder="Пароль"
+          />
+        </Form.Item>
+
+        <Form.Item>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Form.Item name="remember" valuePropName="checked" noStyle>
+              <Checkbox>Запомнить</Checkbox>
+            </Form.Item>
+            <a href="#" style={{ fontSize: "14px" }}>
+              Забыли пароль?
+            </a>
+          </div>
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            style={{ borderRadius: "8px" }}
+          >
+            Войти
+          </Button>
+        </Form.Item>
+      </Form>
+
       <div style={{ textAlign: "center" }}>
-        <Text type="secondary">Нет аккаунта? </Text>
-        <Link to="/auth/sign-up">Зарегистрироваться</Link>
+        <Text type="secondary">
+          Нет аккаунта? <Link to="/auth/sign-up">Зарегистрироваться</Link>
+        </Text>
       </div>
     </>
   );

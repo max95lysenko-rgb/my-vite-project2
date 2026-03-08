@@ -1,48 +1,127 @@
 import React from "react";
-import { Typography, Button, Divider } from "antd";
+import { Form, Input, Button, Checkbox, Typography, message } from "antd";
+import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 const SignUpPage: React.FC = () => {
+  const onFinish = (values: any) => {
+    console.log("Данные регистрации:", values);
+    message.success("Регистрация прошла успешно!");
+  };
+
   return (
-    <div style={{ textAlign: "center" }}>
-      <Title level={2} style={{ marginBottom: 8 }}>
-        Регистрация
-      </Title>
-      <Text type="secondary">Присоединяйтесь к нашему проекту</Text>
-      <div
-        style={{
-          height: "240px",
-          background: "#fafafa",
-          border: "2px dashed #f0f0f0",
-          borderRadius: "12px",
-          margin: "32px 0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Text type="secondary">Здесь будет форма регистрации</Text>
+    <>
+      <div style={{ textAlign: "center", marginBottom: 24 }}>
+        <Title level={3} style={{ margin: 0 }}>
+          Регистрация
+        </Title>
+        <Text type="secondary">Создайте аккаунт, чтобы начать</Text>
       </div>
 
-      <Button
-        type="primary"
+      <Form
+        name="register_form"
+        layout="vertical"
+        onFinish={onFinish}
         size="large"
-        block
-        style={{ borderRadius: "8px", background: "#52c41a" }}
       >
-        Зарегистрироваться
-      </Button>
+        <Form.Item
+          name="nickname"
+          rules={[
+            { required: true, message: "Как вас зовут?", whitespace: true },
+          ]}
+        >
+          <Input
+            prefix={<UserOutlined style={{ color: "#bfbfbf" }} />}
+            placeholder="Имя пользователя"
+          />
+        </Form.Item>
 
-      <Divider plain>
-        <Text style={{ color: "#ccc", fontSize: "12px" }}>
-          УЖЕ ЕСТЬ АККАУНТ?
+        <Form.Item
+          name="email"
+          rules={[
+            { required: true, message: "Введите Email!" },
+            { type: "email", message: "Некорректный Email!" },
+          ]}
+        >
+          <Input
+            prefix={<MailOutlined style={{ color: "#bfbfbf" }} />}
+            placeholder="Email"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="password"
+          rules={[
+            { required: true, message: "Придумайте пароль!" },
+            { min: 6, message: "Минимум 6 символов!" },
+          ]}
+          hasFeedback
+        >
+          <Input.Password
+            prefix={<LockOutlined style={{ color: "#bfbfbf" }} />}
+            placeholder="Пароль"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="confirm"
+          dependencies={["password"]}
+          hasFeedback
+          rules={[
+            { required: true, message: "Подтвердите пароль!" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("password") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Пароли не совпадают!"));
+              },
+            }),
+          ]}
+        >
+          <Input.Password
+            prefix={<LockOutlined style={{ color: "#bfbfbf" }} />}
+            placeholder="Повторите пароль"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="agreement"
+          valuePropName="checked"
+          rules={[
+            {
+              validator: (_, value) =>
+                value
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Нужно принять соглашение")),
+            },
+          ]}
+        >
+          <Checkbox>
+            Я согласен с <a href="#">правилами</a>
+          </Checkbox>
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            style={{ borderRadius: "8px" }}
+          >
+            Создать аккаунт
+          </Button>
+        </Form.Item>
+      </Form>
+
+      <div style={{ textAlign: "center" }}>
+        <Text type="secondary">
+          Уже есть аккаунт? <Link to="/auth/sign-in">Войти</Link>
         </Text>
-      </Divider>
-
-      <Link to="/auth/sign-in">Вернуться ко входу</Link>
-    </div>
+      </div>
+    </>
   );
 };
 
