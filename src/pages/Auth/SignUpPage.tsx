@@ -1,125 +1,91 @@
 import React from "react";
-import { Form, Input, Button, Checkbox, Typography, message } from "antd";
-import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Typography, message } from "antd";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
+// Схема регистрации
+const signUpSchema = z
+  .object({
+    email: z.string().min(1, "Почта обязательна").email("Неверный формат"),
+    password: z.string().min(8, "Минимум 8 символов"),
+    confirmPassword: z.string().min(1, "Подтвердите пароль"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Пароли не совпадают",
+    path: ["confirmPassword"], // Ошибка привяжется к полю confirmPassword
+  });
+
+type SignUpValues = z.infer<typeof signUpSchema>;
+
 const SignUpPage: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log("Данные регистрации:", values);
-    message.success("Регистрация прошла успешно!");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpValues>({
+    resolver: zodResolver(signUpSchema),
+  });
+
+  const onFinish = (values: SignUpValues) => {
+    console.log("Зарегистрирован:", values);
+    message.success("Аккаунт создан!");
   };
 
   return (
     <>
       <div style={{ textAlign: "center", marginBottom: 24 }}>
-        <Title level={3} style={{ margin: 0 }}>
-          Регистрация
-        </Title>
-        <Text type="secondary">Создайте аккаунт, чтобы начать</Text>
+        <Title level={3}>Регистрация</Title>
       </div>
 
-      <Form
-        name="register_form"
-        layout="vertical"
-        onFinish={onFinish}
-        size="large"
-      >
+      <Form layout="vertical" onFinish={handleSubmit(onFinish)} size="large">
         <Form.Item
-          name="nickname"
-          rules={[
-            { required: true, message: "Как вас зовут?", whitespace: true },
-          ]}
+          validateStatus={errors.email ? "error" : ""}
+          help={errors.email?.message}
         >
-          <Input
-            prefix={<UserOutlined style={{ color: "#bfbfbf" }} />}
-            placeholder="Имя пользователя"
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => <Input {...field} placeholder="Email" />}
           />
         </Form.Item>
 
         <Form.Item
-          name="email"
-          rules={[
-            { required: true, message: "Введите Email!" },
-            { type: "email", message: "Некорректный Email!" },
-          ]}
+          validateStatus={errors.password ? "error" : ""}
+          help={errors.password?.message}
         >
-          <Input
-            prefix={<MailOutlined style={{ color: "#bfbfbf" }} />}
-            placeholder="Email"
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input.Password {...field} placeholder="Пароль" />
+            )}
           />
         </Form.Item>
 
         <Form.Item
-          name="password"
-          rules={[
-            { required: true, message: "Придумайте пароль!" },
-            { min: 6, message: "Минимум 6 символов!" },
-          ]}
-          hasFeedback
+          validateStatus={errors.confirmPassword ? "error" : ""}
+          help={errors.confirmPassword?.message}
         >
-          <Input.Password
-            prefix={<LockOutlined style={{ color: "#bfbfbf" }} />}
-            placeholder="Пароль"
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field }) => (
+              <Input.Password {...field} placeholder="Повторите пароль" />
+            )}
           />
         </Form.Item>
 
-        <Form.Item
-          name="confirm"
-          dependencies={["password"]}
-          hasFeedback
-          rules={[
-            { required: true, message: "Подтвердите пароль!" },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error("Пароли не совпадают!"));
-              },
-            }),
-          ]}
-        >
-          <Input.Password
-            prefix={<LockOutlined style={{ color: "#bfbfbf" }} />}
-            placeholder="Повторите пароль"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="agreement"
-          valuePropName="checked"
-          rules={[
-            {
-              validator: (_, value) =>
-                value
-                  ? Promise.resolve()
-                  : Promise.reject(new Error("Нужно принять соглашение")),
-            },
-          ]}
-        >
-          <Checkbox>
-            Я согласен с <a href="#">правилами</a>
-          </Checkbox>
-        </Form.Item>
-
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            style={{ borderRadius: "8px" }}
-          >
-            Создать аккаунт
-          </Button>
-        </Form.Item>
+        <Button type="primary" htmlType="submit" block>
+          Создать аккаунт
+        </Button>
       </Form>
 
-      <div style={{ textAlign: "center" }}>
-        <Text type="secondary">
-          Уже есть аккаунт? <Link to="/auth/sign-in">Войти</Link>
-        </Text>
+      <div style={{ textAlign: "center", marginTop: 16 }}>
+        <Link to="/auth/sign-in">Уже есть аккаунт? Войти</Link>
       </div>
     </>
   );

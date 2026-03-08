@@ -1,91 +1,99 @@
 import React from "react";
-import { Form, Input, Button, Checkbox, Typography, message } from "antd";
+import { Form, Input, Button, Typography, Checkbox, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 const { Title, Text } = Typography;
 
-const SignInPage: React.FC = () => {
-  const [form] = Form.useForm();
+// 1. Создаем схему валидации
+const signInSchema = z.object({
+  email: z.string().min(1, "Введите почту").email("Некорректный формат почты"),
+  password: z.string().min(6, "Пароль должен быть не менее 6 символов"),
+  remember: z.boolean().optional(),
+});
 
-  const onFinish = (values: any) => {
-    console.log("Данные входа:", values);
+// Генерируем тип из схемы
+type SignInValues = z.infer<typeof signInSchema>;
+
+const SignInPage: React.FC = () => {
+  // 2. Инициализируем форму
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignInValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: "", password: "", remember: true },
+  });
+
+  const onFinish = (values: SignInValues) => {
+    console.log("Данные (Zod + RHF):", values);
     message.success("Успешный вход!");
   };
 
   return (
     <>
       <div style={{ textAlign: "center", marginBottom: 24 }}>
-        <Title level={3} style={{ margin: 0 }}>
-          Вход
-        </Title>
-        <Text type="secondary">Добро пожаловать в проект!</Text>
+        <Title level={3}>Вход</Title>
+        <Text type="secondary">Использование RHF + Zod</Text>
       </div>
 
-      <Form
-        form={form}
-        name="login_form"
-        layout="vertical"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        size="large"
-      >
+      <Form layout="vertical" onFinish={handleSubmit(onFinish)} size="large">
+        {/* Email поле */}
         <Form.Item
-          name="email"
-          rules={[
-            { required: true, message: "Введите ваш Email!" },
-            { type: "email", message: "Некорректный формат Email!" },
-          ]}
+          validateStatus={errors.email ? "error" : ""}
+          help={errors.email?.message}
         >
-          <Input
-            prefix={<UserOutlined style={{ color: "#bfbfbf" }} />}
-            placeholder="Email"
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input {...field} prefix={<UserOutlined />} placeholder="Email" />
+            )}
           />
         </Form.Item>
 
+        {/* Пароль поле */}
         <Form.Item
-          name="password"
-          rules={[{ required: true, message: "Введите пароль!" }]}
+          validateStatus={errors.password ? "error" : ""}
+          help={errors.password?.message}
         >
-          <Input.Password
-            prefix={<LockOutlined style={{ color: "#bfbfbf" }} />}
-            placeholder="Пароль"
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input.Password
+                {...field}
+                prefix={<LockOutlined />}
+                placeholder="Пароль"
+              />
+            )}
           />
         </Form.Item>
 
         <Form.Item>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Запомнить</Checkbox>
-            </Form.Item>
-            <a href="#" style={{ fontSize: "14px" }}>
-              Забыли пароль?
-            </a>
-          </div>
+          <Controller
+            name="remember"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Checkbox checked={value} onChange={onChange}>
+                Запомнить меня
+              </Checkbox>
+            )}
+          />
         </Form.Item>
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            style={{ borderRadius: "8px" }}
-          >
-            Войти
-          </Button>
-        </Form.Item>
+        <Button type="primary" htmlType="submit" block loading={isSubmitting}>
+          Войти
+        </Button>
       </Form>
 
+      <Divider />
       <div style={{ textAlign: "center" }}>
-        <Text type="secondary">
-          Нет аккаунта? <Link to="/auth/sign-up">Зарегистрироваться</Link>
-        </Text>
+        <Link to="/auth/sign-up">Зарегистрироваться</Link>
       </div>
     </>
   );
