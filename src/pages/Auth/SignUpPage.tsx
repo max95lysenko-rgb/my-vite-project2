@@ -15,7 +15,7 @@ const signUpSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Пароли не совпадают",
-    path: ["confirmPassword"], // Ошибка привяжется к полю confirmPassword
+    path: ["confirmPassword"], 
   });
 
 type SignUpValues = z.infer<typeof signUpSchema>;
