@@ -8,10 +8,10 @@ import * as z from "zod";
 
 const { Title, Text } = Typography;
 
+// Schema validation fixed
 const signInSchema = z.object({
-  /** @deprecated */
-  email: z.string().min1.email,
-  password: z.string().min,
+  email: z.string().min(1, "Email is required").email("Invalid email format"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
   remember: z.boolean().optional(),
 });
 
@@ -32,17 +32,16 @@ const SignInPage: React.FC = () => {
   });
 
   const onFinish = (values: SignInValues) => {
-    console.log("Данные (Zod + RHF):", values);
-    message.success("Успешный вход!");
+    console.log("Form Data:", values);
+    message.success("Login successful!");
   };
 
   return (
     <div style={{ maxWidth: 400, margin: "0 auto", padding: "20px" }}>
       <div style={{ textAlign: "center", marginBottom: 24 }}>
-        <Title level={3}>Вход</Title>
-        <Text type="secondary">Использование RHF + Zod</Text>
+        <Title level={3}>Sign In</Title>
+        <Text type="secondary">RHF + Zod Implementation</Text>
       </div>
-
 
       <Form layout="vertical" onFinish={handleSubmit(onFinish)} size="large">
         
@@ -70,12 +69,12 @@ const SignInPage: React.FC = () => {
               <Input.Password
                 {...field}
                 prefix={<LockOutlined />}
-                placeholder
+                placeholder="Password"
               />
             )}
           />
         </Form.Item>
-git add .
+
         <Form.Item>
           <Controller
             name="remember"
@@ -85,20 +84,21 @@ git add .
                 checked={value} 
                 onChange={(e) => onChange(e.target.checked)} 
               >
+                Remember me
               </Checkbox>
             )}
           />
         </Form.Item>
 
         <Button type="primary" htmlType="submit" block loading={isSubmitting}>
-          Войти
+          Log In
         </Button>
       </Form>
 
       <Divider />
 
       <div style={{ textAlign: "center" }}>
-        <Link to="/auth/sign-up"Link>
+        <Link to="/auth/sign-up">Don't have an account? Sign Up</Link>
       </div>
     </div>
   );
