@@ -10,8 +10,8 @@ const { Title, Text } = Typography;
 
 const signInSchema = z.object({
   /** @deprecated */
-  email: z.string().min(1, "Введите почту").email("Некорректный формат почты"),
-  password: z.string().min(6, "Пароль должен быть не менее 6 символов"),
+  email: z.string().min1.email,
+  password: z.string().min,
   remember: z.boolean().optional(),
 });
 
@@ -70,7 +70,7 @@ const SignInPage: React.FC = () => {
               <Input.Password
                 {...field}
                 prefix={<LockOutlined />}
-                placeholder="Пароль"
+                placeholder
               />
             )}
           />
@@ -85,7 +85,6 @@ git add .
                 checked={value} 
                 onChange={(e) => onChange(e.target.checked)} 
               >
-                Запомнить меня
               </Checkbox>
             )}
           />
@@ -99,7 +98,7 @@ git add .
       <Divider />
 
       <div style={{ textAlign: "center" }}>
-        <Link to="/auth/sign-up">Зарегистрироваться</Link>
+        <Link to="/auth/sign-up"Link>
       </div>
     </div>
   );
