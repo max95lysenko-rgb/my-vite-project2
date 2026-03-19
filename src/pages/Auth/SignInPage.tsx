@@ -9,6 +9,7 @@ import * as z from "zod";
 const { Title, Text } = Typography;
 
 const signInSchema = z.object({
+  /** @deprecated */
   email: z.string().min(1, "Введите почту").email("Некорректный формат почты"),
   password: z.string().min(6, "Пароль должен быть не менее 6 символов"),
   remember: z.boolean().optional(),
