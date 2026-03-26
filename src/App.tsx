@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from './store';
+import type { RootState, AppDispatch } from './store/index';
 import { addMoney } from './store/userSlice';
 import { saveUserData } from './utils/storage';
 import Header from './components/Header';
@@ -54,3 +54,8 @@ const App: React.FC = () => {
           />
         </Routes>
       </div>
+    </Router>
+  );
+};
+
+export default App;
