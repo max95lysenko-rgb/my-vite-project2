@@ -1,9 +1,10 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 
 export interface Pokemon {
   name: string;
   image: string;
   hp: number;
+  weight: number; 
 }
 
 export const fetchRandomPokemon = createAsyncThunk('pokemon/fetchRandom', async () => {
@@ -14,41 +15,6 @@ export const fetchRandomPokemon = createAsyncThunk('pokemon/fetchRandom', async 
     name: data.name,
     image: data.sprites.other['official-artwork'].front_default,
     hp: data.stats[0].base_stat,
+    weight: data.weight, 
   };
 });
-
-interface PokemonState {
-  activePokemon: Pokemon | null;
-  collection: Pokemon[]; 
-  loading: boolean;
-}
-
-const initialState: PokemonState = {
-  activePokemon: null,
-  collection: [],
-  loading: false,
-};
-
-const pokemonSlice = createSlice({
-  name: 'pokemon',
-  initialState,
-  reducers: {
-    setCollection: (state, action: PayloadAction<Pokemon[]>) => {
-      state.collection = action.payload;
-    },
-    addPokemonToCollection: (state, action: PayloadAction<Pokemon>) => {
-      state.collection.push(action.payload);
-    }
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchRandomPokemon.pending, (state) => { state.loading = true; })
-      .addCase(fetchRandomPokemon.fulfilled, (state, action) => {
-        state.loading = false;
-        state.activePokemon = action.payload;
-      });
-  },
-});
-
-export const { setCollection, addPokemonToCollection } = pokemonSlice.actions;
-export default pokemonSlice.reducer;

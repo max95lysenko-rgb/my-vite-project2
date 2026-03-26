@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { RootState } from '../store';
+import type { RootState } from '../store/index';
 import { logoutUser } from '../store/userSlice';
 import { saveUserData } from '../utils/storage';
 

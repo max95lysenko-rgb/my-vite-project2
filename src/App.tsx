@@ -1,17 +1,11 @@
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from './store';
-import { saveUserData } from './utils/storage';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addMoney } from './store/userSlice';
+import type { RootState, AppDispatch } from './store';
 
-const { username, money } = useSelector((state: RootState) => state.user);
-const { collection } = useSelector((state: RootState) => state.pokemon);
+const App: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { username, money } = useSelector((state: RootState) => state.user);
+  const { activePokemon, collection } = useSelector((state: RootState) => state.pokemon);
 
-useEffect(() => {
-  const handleBeforeUnload = () => {
-    if (username) {
-      saveUserData(username, money, collection);
-    }
-  };
-  window.addEventListener('beforeunload', handleBeforeUnload);
-  return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-}, [username, money, collection]);
+  useEffect(() => {
