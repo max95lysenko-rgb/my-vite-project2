@@ -30,7 +30,7 @@ const SignInPage: React.FC = () => {
     },
   });
 
-  const onFinish = (values: SignInValues) => {
+  const onFinish = (_values: SignInValues) => {
     message.success("Success");
   };
 
