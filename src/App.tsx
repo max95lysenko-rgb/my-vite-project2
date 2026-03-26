@@ -1,35 +1,38 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-import AuthLayout from "./layouts/AuthLayout";
-import SignInPage from "./pages/auth/SignInPage";
-import SignUpPage from "./pages/auth/SignUpPage";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/auth" element={<AuthLayout />}>
-          <Route path="sign-in" element={<SignInPage />} />
-
-          <Route path="sign-up" element={<SignUpPage />} />
-
-          <Route index element={<Navigate to="sign-in" replace />} />
-        </Route>
-
-        <Route path="/" element={<Navigate to="/auth/sign-in" replace />} />
-
-        <Route
-          path="*"
-          element={
-            <div style={{ padding: 100, textAlign: "center" }}>
-              404 Not Found
-            </div>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <Router>
+      <div style={styles.app}>
+        <Header />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </div>
+    </Router>
   );
+};
+
+const styles: Record<string, React.CSSProperties> = {
+  app: {
+    backgroundColor: '#121212',
+    minHeight: '100vh',
+    color: 'white',
+    fontFamily: 'sans-serif'
+  }
 };
 
 export default App;
