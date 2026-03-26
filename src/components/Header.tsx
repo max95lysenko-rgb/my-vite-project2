@@ -1,7 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../store';
+import { addMoney, removeMoney } from '../store/userSlice';
 
 const Header: React.FC = () => {
+  const money = useSelector((state: RootState) => state.user.money);
+  const dispatch = useDispatch();
+
   return (
     <header style={styles.header}>
       <Link to="/" style={styles.logo}>
@@ -10,7 +16,11 @@ const Header: React.FC = () => {
       </Link>
 
       <div style={styles.res}>
-        <div style={styles.item}>💰 1,500</div>
+        <div style={styles.moneyContainer}>
+          <button onClick={() => dispatch(removeMoney(10))} style={styles.btn}>-</button>
+          <div style={styles.item}>💰 {money}</div>
+          <button onClick={() => dispatch(addMoney(10))} style={styles.btn}>+</button>
+        </div>
         <div style={styles.item}>💎 50</div>
       </div>
 
@@ -49,13 +59,30 @@ const styles: Record<string, React.CSSProperties> = {
   },
   res: {
     display: 'flex',
-    gap: '15px'
+    gap: '15px',
+    alignItems: 'center'
+  },
+  moneyContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
   },
   item: {
     background: '#333',
     padding: '6px 14px',
     borderRadius: '15px',
-    fontSize: '14px'
+    fontSize: '14px',
+    minWidth: '80px',
+    textAlign: 'center'
+  },
+  btn: {
+    background: '#FFCB05',
+    border: 'none',
+    borderRadius: '4px',
+    width: '24px',
+    height: '24px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
   },
   user: {
     display: 'flex',
