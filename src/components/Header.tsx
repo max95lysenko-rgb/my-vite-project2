@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store';
-import { addMoney, removeMoney, logoutUser } from '../store/userSlice';
+import { logoutUser } from '../store/userSlice';
 import { saveUserData } from '../utils/storage';
 
 const Header: React.FC = () => {
@@ -32,17 +32,13 @@ const Header: React.FC = () => {
         <nav style={styles.nav}>
           <Link to="/" style={styles.navLink}>Главная</Link>
           <Link to="/shop" style={styles.navLink}>Магазин</Link>
+          <Link to="/inventory" style={styles.navLink}>Инвентарь</Link>
         </nav>
       </div>
 
       {username && (
         <div style={styles.right}>
-          <div style={styles.res}>
-            <button onClick={() => dispatch(removeMoney(10))} style={styles.ctrlBtn}>-</button>
-            <div style={styles.item}>💰 {money}</div>
-            <button onClick={() => dispatch(addMoney(10))} style={styles.ctrlBtn}>+</button>
-          </div>
-
+          <div style={styles.item}>💰 {money}</div>
           <div style={styles.user} onClick={handleLogout}>
             <span style={styles.userName}>{username}</span>
             <div style={styles.ava}></div>
@@ -99,11 +95,6 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: '20px'
   },
-  res: {
-    display: 'flex',
-    gap: '10px',
-    alignItems: 'center'
-  },
   item: {
     background: '#333',
     padding: '6px 14px',
@@ -112,23 +103,11 @@ const styles: Record<string, React.CSSProperties> = {
     minWidth: '80px',
     textAlign: 'center'
   },
-  ctrlBtn: {
-    background: '#FFCB05',
-    border: 'none',
-    borderRadius: '4px',
-    width: '24px',
-    height: '24px',
-    cursor: 'pointer',
-    fontWeight: 'bold'
-  },
   user: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    cursor: 'pointer',
-    padding: '5px 10px',
-    borderRadius: '8px',
-    border: '1px solid transparent'
+    cursor: 'pointer'
   },
   userName: {
     fontSize: '14px',
