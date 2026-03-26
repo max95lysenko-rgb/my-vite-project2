@@ -1,103 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store';
-import { addMoney, removeMoney } from '../store/userSlice';
+import { configureStore } from '@reduxjs/toolkit';
+import userReducer from './userSlice';
 
-const Header: React.FC = () => {
-  const money = useSelector((state: RootState) => state.user.money);
-  const dispatch = useDispatch();
+export const store = configureStore({
+  reducer: {
+    user: userReducer,
+  },
+});
 
-  return (
-    <header style={styles.header}>
-      <Link to="/" style={styles.logo}>
-        <div style={styles.ball}></div>
-        <span style={styles.title}>POKEMON <span style={{ color: '#FFCB05' }}>CLICKER</span></span>
-      </Link>
-
-      <div style={styles.res}>
-        <div style={styles.moneyContainer}>
-          <button onClick={() => dispatch(removeMoney(10))} style={styles.btn}>-</button>
-          <div style={styles.item}>💰 {money}</div>
-          <button onClick={() => dispatch(addMoney(10))} style={styles.btn}>+</button>
-        </div>
-        <div style={styles.item}>💎 50</div>
-      </div>
-
-      <div style={styles.user}>
-        <span style={styles.userName}>Player_1</span>
-        <div style={styles.ava}></div>
-      </div>
-    </header>
-  );
-};
-
-const styles: Record<string, React.CSSProperties> = {
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '0 30px',
-    height: '70px',
-    background: '#1e1e1e',
-    borderBottom: '3px solid #FFCB05'
-  },
-  logo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    textDecoration: 'none',
-    color: 'white',
-    fontWeight: '900'
-  },
-  ball: {
-    width: '25px',
-    height: '25px',
-    background: 'red',
-    borderRadius: '50%',
-    border: '2px solid white'
-  },
-  res: {
-    display: 'flex',
-    gap: '15px',
-    alignItems: 'center'
-  },
-  moneyContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px'
-  },
-  item: {
-    background: '#333',
-    padding: '6px 14px',
-    borderRadius: '15px',
-    fontSize: '14px',
-    minWidth: '80px',
-    textAlign: 'center'
-  },
-  btn: {
-    background: '#FFCB05',
-    border: 'none',
-    borderRadius: '4px',
-    width: '24px',
-    height: '24px',
-    cursor: 'pointer',
-    fontWeight: 'bold'
-  },
-  user: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px'
-  },
-  userName: {
-    fontSize: '14px'
-  },
-  ava: {
-    width: '35px',
-    height: '35px',
-    background: '#FFCB05',
-    borderRadius: '50%'
-  }
-};
-
-export default Header;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
