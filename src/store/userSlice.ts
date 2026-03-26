@@ -1,21 +1,15 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface UserState {
-  money: number;
-}
-
-const initialState: UserState = {
-  money: 1500,
-};
+import { createSlice } from '@reduxjs/toolkit';
 
 const userSlice = createSlice({
   name: 'user',
-  initialState,
+  initialState: {
+    money: 1500,
+  },
   reducers: {
-    addMoney: (state, action: PayloadAction<number>) => {
+    addMoney: (state, action) => {
       state.money += action.payload;
     },
-    removeMoney: (state, action: PayloadAction<number>) => {
+    removeMoney: (state, action) => {
       state.money -= action.payload;
     },
   },
