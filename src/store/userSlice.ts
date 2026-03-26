@@ -24,6 +24,9 @@ const userSlice = createSlice({
     addMoney: (state, action: PayloadAction<number>) => {
       state.money += action.payload;
     },
+    removeMoney: (state, action: PayloadAction<number>) => {
+      state.money -= action.payload;
+    },
     buyItem: (state, action: PayloadAction<string>) => {
       if (state.money >= 1000) {
         state.money -= 1000;
@@ -38,5 +41,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, addMoney, buyItem, logoutUser } = userSlice.actions;
+export const { setUser, addMoney, removeMoney, buyItem, logoutUser } = userSlice.actions;
 export default userSlice.reducer;
