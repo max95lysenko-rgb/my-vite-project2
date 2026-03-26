@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../store';
+import type { RootState, AppDispatch } from '../store'; 
 import { fetchRandomPokemon } from '../store/pokemonSlice';
 
 const Home: React.FC = () => {
