@@ -1,38 +1,17 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import ProtectedRoute from './components/ProtectedRoute';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from './store';
+import { saveUserData } from './utils/storage';
 
-const App: React.FC = () => {
-  return (
-    <Router>
-      <div style={styles.app}>
-        <Header />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route 
-            path="/" 
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
-      </div>
-    </Router>
-  );
-};
+const { username, money } = useSelector((state: RootState) => state.user);
+const { collection } = useSelector((state: RootState) => state.pokemon);
 
-const styles: Record<string, React.CSSProperties> = {
-  app: {
-    backgroundColor: '#121212',
-    minHeight: '100vh',
-    color: 'white',
-    fontFamily: 'sans-serif'
-  }
-};
-
-export default App;
+useEffect(() => {
+  const handleBeforeUnload = () => {
+    if (username) {
+      saveUserData(username, money, collection);
+    }
+  };
+  window.addEventListener('beforeunload', handleBeforeUnload);
+  return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+}, [username, money, collection]);

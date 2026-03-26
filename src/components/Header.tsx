@@ -1,88 +1,49 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import type { RootState } from "../store";
-import { addMoney, removeMoney } from "../store/userSlice";
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '../store';
+import { logoutUser } from '../store/userSlice';
+import { saveUserData } from '../utils/storage';
 
 const Header: React.FC = () => {
-  const money = useSelector((state: RootState) => state.user.money);
+  const { username, money } = useSelector((state: RootState) => state.user);
+  const { collection } = useSelector((state: RootState) => state.pokemon);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    if (username) {
+      saveUserData(username, money, collection);
+    }
+    dispatch(logoutUser());
+    localStorage.removeItem('isAuth');
+    localStorage.removeItem('currentUser');
+    navigate('/login');
+  };
 
   return (
     <header style={styles.header}>
-      <Link to="/" style={styles.logo}>
-        <div style={styles.ball}></div>
-        <span>POKEMON CLICKER</span>
-      </Link>
-
-      <div style={styles.res}>
-        <button onClick={() => dispatch(removeMoney(10))} style={styles.btn}>
-          -
-        </button>
-        <div style={styles.item}>💰 {money}</div>
-        <button onClick={() => dispatch(addMoney(10))} style={styles.btn}>
-          +
-        </button>
-      </div>
-
-      <div style={styles.user}>
-        <span>Player_1</span>
-        <div style={styles.ava}></div>
-      </div>
+      <div style={styles.logo}>POKEMON CLICKER</div>
+      
+      {username && (
+        <div style={styles.info}>
+          <div style={styles.stat}>💰 {money}</div>
+          <div style={styles.stat}>🎒 {collection.length} pokes</div>
+          <div style={styles.user} onClick={handleLogout} title="Выйти">
+            {username} (Выход)
+          </div>
+        </div>
+      )}
     </header>
   );
 };
 
 const styles: Record<string, React.CSSProperties> = {
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "0 30px",
-    height: "70px",
-    background: "#1e1e1e",
-    borderBottom: "3px solid #FFCB05",
-  },
-  logo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    textDecoration: "none",
-    color: "white",
-    fontWeight: "900",
-  },
-  ball: {
-    width: "25px",
-    height: "25px",
-    background: "red",
-    borderRadius: "50%",
-    border: "2px solid white",
-  },
-  res: { display: "flex", gap: "15px", alignItems: "center" },
-  item: {
-    background: "#333",
-    padding: "6px 14px",
-    borderRadius: "15px",
-    fontSize: "14px",
-    minWidth: "80px",
-    textAlign: "center",
-  },
-  btn: {
-    background: "#FFCB05",
-    border: "none",
-    borderRadius: "4px",
-    width: "24px",
-    height: "24px",
-    cursor: "pointer",
-    fontWeight: "bold",
-  },
-  user: { display: "flex", alignItems: "center", gap: "10px" },
-  ava: {
-    width: "35px",
-    height: "35px",
-    background: "#FFCB05",
-    borderRadius: "50%",
-  },
+  header: { display: 'flex', justifyContent: 'space-between', padding: '0 20px', height: '60px', alignItems: 'center', background: '#1e1e1e', borderBottom: '2px solid #FFCB05' },
+  logo: { fontWeight: 'bold', color: '#FFCB05' },
+  info: { display: 'flex', gap: '20px', alignItems: 'center' },
+  stat: { fontSize: '14px' },
+  user: { cursor: 'pointer', color: '#aaa', fontSize: '14px', border: '1px solid #444', padding: '4px 8px', borderRadius: '4px' }
 };
 
 export default Header;
