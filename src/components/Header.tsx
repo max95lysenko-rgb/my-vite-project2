@@ -1,8 +1,8 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import type { RootState } from '../store/index';
-import { logoutUser } from '../store/userSlice';
+import { RootState } from '../store';
+import { addMoney, removeMoney, logoutUser } from '../store/userSlice';
 import { saveUserData } from '../utils/storage';
 
 const Header: React.FC = () => {
@@ -23,14 +23,29 @@ const Header: React.FC = () => {
 
   return (
     <header style={styles.header}>
-      <div style={styles.logo}>POKEMON CLICKER</div>
-      
+      <div style={styles.left}>
+        <Link to="/" style={styles.logo}>
+          <div style={styles.ball}></div>
+          <span style={styles.title}>POKEMON <span style={{ color: '#FFCB05' }}>CLICKER</span></span>
+        </Link>
+        
+        <nav style={styles.nav}>
+          <Link to="/" style={styles.navLink}>Главная</Link>
+          <Link to="/shop" style={styles.navLink}>Магазин</Link>
+        </nav>
+      </div>
+
       {username && (
-        <div style={styles.info}>
-          <div style={styles.stat}>💰 {money}</div>
-          <div style={styles.stat}>🎒 {collection.length} pokes</div>
-          <div style={styles.user} onClick={handleLogout} title="Выйти">
-            {username} (Выход)
+        <div style={styles.right}>
+          <div style={styles.res}>
+            <button onClick={() => dispatch(removeMoney(10))} style={styles.ctrlBtn}>-</button>
+            <div style={styles.item}>💰 {money}</div>
+            <button onClick={() => dispatch(addMoney(10))} style={styles.ctrlBtn}>+</button>
+          </div>
+
+          <div style={styles.user} onClick={handleLogout}>
+            <span style={styles.userName}>{username}</span>
+            <div style={styles.ava}></div>
           </div>
         </div>
       )}
@@ -39,11 +54,92 @@ const Header: React.FC = () => {
 };
 
 const styles: Record<string, React.CSSProperties> = {
-  header: { display: 'flex', justifyContent: 'space-between', padding: '0 20px', height: '60px', alignItems: 'center', background: '#1e1e1e', borderBottom: '2px solid #FFCB05' },
-  logo: { fontWeight: 'bold', color: '#FFCB05' },
-  info: { display: 'flex', gap: '20px', alignItems: 'center' },
-  stat: { fontSize: '14px' },
-  user: { cursor: 'pointer', color: '#aaa', fontSize: '14px', border: '1px solid #444', padding: '4px 8px', borderRadius: '4px' }
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0 30px',
+    height: '70px',
+    background: '#1e1e1e',
+    borderBottom: '3px solid #FFCB05'
+  },
+  left: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '40px'
+  },
+  logo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    textDecoration: 'none',
+    color: 'white',
+    fontWeight: '900'
+  },
+  ball: {
+    width: '25px',
+    height: '25px',
+    background: 'red',
+    borderRadius: '50%',
+    border: '2px solid white'
+  },
+  nav: {
+    display: 'flex',
+    gap: '20px'
+  },
+  navLink: {
+    color: '#aaa',
+    textDecoration: 'none',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    transition: '0.3s'
+  },
+  right: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px'
+  },
+  res: {
+    display: 'flex',
+    gap: '10px',
+    alignItems: 'center'
+  },
+  item: {
+    background: '#333',
+    padding: '6px 14px',
+    borderRadius: '15px',
+    fontSize: '14px',
+    minWidth: '80px',
+    textAlign: 'center'
+  },
+  ctrlBtn: {
+    background: '#FFCB05',
+    border: 'none',
+    borderRadius: '4px',
+    width: '24px',
+    height: '24px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  user: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    cursor: 'pointer',
+    padding: '5px 10px',
+    borderRadius: '8px',
+    border: '1px solid transparent'
+  },
+  userName: {
+    fontSize: '14px',
+    color: '#FFCB05'
+  },
+  ava: {
+    width: '35px',
+    height: '35px',
+    background: '#FFCB05',
+    borderRadius: '50%'
+  }
 };
 
 export default Header;

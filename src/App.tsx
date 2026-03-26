@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from './store/index';
+import { RootState, AppDispatch } from './store';
 import { addMoney } from './store/userSlice';
 import { saveUserData } from './utils/storage';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Shop from './pages/Shop';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { username, money } = useSelector((state: RootState) => state.user);
+  const { username, money, inventory } = useSelector((state: RootState) => state.user);
   const { activePokemon, collection } = useSelector((state: RootState) => state.pokemon);
 
   useEffect(() => {
@@ -49,6 +50,14 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/shop" 
+            element={
+              <ProtectedRoute>
+                <Shop />
               </ProtectedRoute>
             } 
           />
